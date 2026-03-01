@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group"
+import { useNavigate, useLocation } from "react-router-dom"
 import {
     Card,
     CardContent,
@@ -15,18 +16,41 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { loginSchema, type LoginModel } from "../model/login.type"
 import { useState } from "react"
+import { useLoginMutation } from "../services/api"
+import { useAuth } from "@/context/AuthContext"
+import { toast } from "sonner"
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { login } = useAuth();
+    const { mutate: loginUser, isPending, error } = useLoginMutation();
 
     const form = useForm<LoginModel>({
         resolver: zodResolver(loginSchema),
-        defaultValues: {email: '', password: ''},
+        defaultValues: { email: '', password: '' },
         mode: 'onChange'
     });
 
     const onLogin = (values: LoginModel) => {
-        console.log(values);
+        loginUser(
+            { email: values.email, password: values.password },
+            {
+                onSuccess: (response) => {
+                    if (response.data && response.data) {
+                        login(response.data);
+                        const from = location.state?.from?.pathname || "/";
+                        navigate(from, { replace: true });
+                    }
+                    toast.success("Login successful");
+                },
+                onError: (err) => {
+                    console.error("Login Error:", err);
+                    toast.error("Login failed");
+                }
+            }
+        );
     }
 
     return (
@@ -47,7 +71,7 @@ const Login = () => {
                                 rules={{ required: 'email is invalid' }}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Email</FormLabel> 
+                                        <FormLabel>Email</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="username@example.com"
@@ -96,8 +120,13 @@ const Login = () => {
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" className="w-full">
-                                Login
+                            {error ? (
+                                <div className="text-sm font-medium text-destructive">
+                                    {error.message || "An error occurred during login."}
+                                </div>
+                            ) : null}
+                            <Button type="submit" className="w-full" disabled={isPending}>
+                                {isPending ? "Logging in..." : "Login"}
                             </Button>
                         </form>
                     </Form>

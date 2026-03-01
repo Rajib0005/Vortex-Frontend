@@ -1,4 +1,4 @@
-import apiClient from "@/lib/axios";
+import { apiService } from "@/lib/axios";
 
 export interface BaseResponse<T> {
   success: boolean;
@@ -7,11 +7,9 @@ export interface BaseResponse<T> {
   errors?: string[];
 }
 
-const responseBody = <T>(response: { data: BaseResponse<T> }) => response.data;
-
 export const api = {
-  get: <T>(url: string) => apiClient.get<BaseResponse<T>>(url).then(responseBody),
-  post: <T>(url: string, body: {}) => apiClient.post<BaseResponse<T>>(url, body).then(responseBody),
-  put: <T>(url: string, body: {}) => apiClient.put<BaseResponse<T>>(url, body).then(responseBody),
-  delete: <T>(url: string) => apiClient.delete<BaseResponse<T>>(url).then(responseBody),
+  get: <T>(url: string) => apiService.get<T>(url),
+  post: <T>(url: string, body: {}) => apiService.post<T>(url, body),
+  put: <T>(url: string, body: {}) => apiService.put<T>(url, body),
+  delete: <T>(url: string) => apiService.delete<T>(url),
 };
