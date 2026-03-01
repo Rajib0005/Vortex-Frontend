@@ -40,7 +40,8 @@ const Login = () => {
                 onSuccess: (response) => {
                     if (response.data && response.data) {
                         login(response.data);
-                        const from = location.state?.from?.pathname || "/";
+                        let from = location.state?.from?.pathname || "/dashboard";
+                        if (from === "/") from = "/dashboard";
                         navigate(from, { replace: true });
                     }
                     toast.success("Login successful");

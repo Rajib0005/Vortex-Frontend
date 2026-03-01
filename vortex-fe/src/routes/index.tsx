@@ -3,6 +3,7 @@ import { authRoutes } from "../feature/auth/routes";
 import BaseLayout from "./route.layout"
 import { ProtectedRoute } from "./ProtectedRoute";
 import { ComingSoon } from "@/components/shared/ComingSoon";
+import { LandingPage } from "@/pages/LandingPage";
 import {
   LayoutDashboard,
   Inbox,
@@ -20,15 +21,14 @@ const routes: RouteObject[] = [
   ...authRoutes,
   {
     path: "/",
+    element: <LandingPage />
+  },
+  {
     element: <ProtectedRoute />,
     children: [
       {
-        path: "/",
         element: <BaseLayout />,
         children: [
-          {
-            element: <Navigate to="/dashboard" replace />,
-          },
           {
             path: "dashboard",
             element: <ComingSoon title="dashboard" icon={LayoutDashboard} />,
