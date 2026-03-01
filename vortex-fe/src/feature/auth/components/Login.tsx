@@ -56,11 +56,19 @@ const Login = () => {
     return (
         <div className="flex justify-center items-center">
             <Card className="w-full max-w-sm my-30">
-                <CardHeader>
-                    <CardTitle>Login to your account</CardTitle>
-                    <CardDescription>
-                        Enter your email below to login to your account
-                    </CardDescription>
+                <CardHeader className="space-y-3 items-center text-center">
+                    <div className="flex flex-col items-center gap-2 mb-2">
+                        <div className="flex h-10 w-10 items-center justify-center rounded bg-indigo-500 text-white font-bold text-xl shadow-sm">
+                            V
+                        </div>
+                        <span className="font-semibold text-lg tracking-tight">Vortex</span>
+                    </div>
+                    <div>
+                        <CardTitle className="text-xl">Login to your account</CardTitle>
+                        <CardDescription className="mt-1">
+                            Enter your email below to login to your account
+                        </CardDescription>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>

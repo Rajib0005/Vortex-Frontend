@@ -6,6 +6,7 @@ import "./index.css";
 import routes from "./routes";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,10 +21,12 @@ const router = createBrowserRouter(routes);
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <RouterProvider router={router} />
-        <Toaster position="top-right" duration={2000} />
-      </AuthProvider>
+      <ThemeProvider defaultTheme="dark" storageKey="vortex-theme">
+        <AuthProvider>
+          <RouterProvider router={router} />
+          <Toaster position="top-right" duration={2000} />
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>
 );
