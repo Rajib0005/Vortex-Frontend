@@ -18,7 +18,6 @@ import { loginSchema, type LoginModel } from "../model/login.type"
 import { useState } from "react"
 import { useLoginMutation } from "../services/api"
 import { useAuth } from "@/context/AuthContext"
-import { toast } from "sonner"
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -38,17 +37,15 @@ const Login = () => {
             { email: values.email, password: values.password },
             {
                 onSuccess: (response) => {
-                    if (response.data && response.data) {
+                    if (response.data) {
                         login(response.data);
-                        let from = location.state?.from?.pathname || "/dashboard";
-                        if (from === "/") from = "/dashboard";
+                        let from = location.state?.from?.pathname || "/projects";
+                        if (from === "/") from = "/projects";
                         navigate(from, { replace: true });
                     }
-                    toast.success("Login successful");
                 },
                 onError: (err) => {
                     console.error("Login Error:", err);
-                    toast.error("Login failed");
                 }
             }
         );

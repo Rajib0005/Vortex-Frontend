@@ -3,3 +3,13 @@ export interface LoginRequest {
   password?: string;
 }
 
+export interface UserDetails {
+  id: string;
+  fullName: string | null;
+  email: string | null;
+  userName: string | null;
+  isActive: boolean;
+  isEmailConfirmed: boolean;
+  roleId: string;
+  roleName: string;
+}

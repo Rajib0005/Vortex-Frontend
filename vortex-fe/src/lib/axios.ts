@@ -1,5 +1,6 @@
 import axios, { type AxiosResponse, AxiosError } from 'axios';
 import type { BaseResponse } from '@/model/base.api.model';
+import { toast } from 'sonner';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:5180';
 
@@ -27,31 +28,41 @@ axiosInstance.interceptors.response.use(
   (response: AxiosResponse<BaseResponse<any>>) => {
     // The interceptor now returns the full BaseResponse object
     if (response.data.success) {
+      if (response.config.method !== 'get' && response.data.message) {
+        toast.success(response.data.message);
+      }
       return response.data as any;
     } else {
+      const message = response.data.message || 'Operation failed';
+      toast.error(message);
       return Promise.reject({
         isBusinessError: true,
-        message: response.data.message,
+        message: message,
         errors: response.data.errors,
       });
     }
   },
   (error: AxiosError) => {
+    let message = 'An unexpected error occurred';
+    let errors: string[] | undefined;
+    let isBusinessError = false;
 
     if (error.response && error.response.data) {
       const errorData = error.response.data as BaseResponse<null>;
-      return Promise.reject({
-        isBusinessError: true,
-        message: errorData.message || 'An error occurred',
-        errors: errorData.errors,
-        statusCode: error.response.status
-      });
+      message = errorData.message || 'An error occurred';
+      errors = errorData.errors;
+      isBusinessError = true;
+    } else {
+      message = error.message || 'An unexpected network error occurred';
     }
-    // Handle network errors or other issues
+
+    toast.error(message);
+
     return Promise.reject({
-      isBusinessError: false,
-      message: error.message || 'An unexpected network error occurred',
-      statusCode: error.response?.status,
+      isBusinessError,
+      message,
+      errors,
+      statusCode: error.response?.status
     });
   }
 );

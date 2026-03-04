@@ -2,9 +2,11 @@ import { Link, useNavigate } from "react-router-dom"
 import { ChevronRight, LayoutTemplate, Zap, Shield, Sparkles, Inbox, ListTodo, Disc, Target, Layers, Users, MessageSquare } from "lucide-react"
 import { useRef, useState } from "react"
 import { motion, useScroll, useTransform, useSpring } from "framer-motion"
+import { useAuth } from "@/context/AuthContext";
 
 export function LandingPage() {
     const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();
     const [isHovered, setIsHovered] = useState(false);
     const methodologyRef = useRef<HTMLDivElement>(null);
 
@@ -30,7 +32,7 @@ export function LandingPage() {
     });
 
     const clipPath = useTransform(smoothProgress, (v) => `inset(0 0 ${100 - v * 100}% 0)`);
-
+    const getStartedPath = isAuthenticated ? "/projects" : "/login";
     return (
         <div className="min-h-screen bg-black text-white selection:bg-indigo-500/30 font-sans">
             {/* Header */}
@@ -48,14 +50,16 @@ export function LandingPage() {
                         <a href="#customers" className="hover:text-white transition-colors">Customers</a>
                         <a href="#changelog" className="hover:text-white transition-colors">Changelog</a>
                     </nav>
-                    <div className="flex items-center gap-4">
-                        <Link to="/login" className="text-sm font-medium text-white/70 hover:text-white transition-colors">
-                            Log in
-                        </Link>
-                        <Link to="/login" className="text-sm font-medium bg-white text-black px-4 py-1.5 rounded-full hover:bg-white/90 transition-colors">
-                            Sign up
-                        </Link>
-                    </div>
+                    {!isAuthenticated && (
+                        <div className="flex items-center gap-4">
+                            <Link to="/login" className="text-sm font-medium text-white/70 hover:text-white transition-colors">
+                                Log in
+                            </Link>
+                            <Link to="/login" className="text-sm font-medium bg-white text-black px-4 py-1.5 rounded-full hover:bg-white/90 transition-colors">
+                                Sign up
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </header>
 
@@ -82,10 +86,10 @@ export function LandingPage() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <Link to="/login" className="flex items-center justify-center h-12 px-8 rounded-full bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 font-semibold transition-colors w-full sm:w-auto">
+                            <Link to={getStartedPath} className="flex items-center justify-center h-12 px-8 rounded-full bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 font-semibold transition-colors w-full sm:w-auto">
                                 Get started
                             </Link>
-                            <a href="#features" className="flex items-center justify-center h-12 px-8 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium transition-colors w-full sm:w-auto">
+                            <a href="#methodology" className="flex items-center justify-center h-12 px-8 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium transition-colors w-full sm:w-auto">
                                 Introducing Methodology
                             </a>
                         </div>

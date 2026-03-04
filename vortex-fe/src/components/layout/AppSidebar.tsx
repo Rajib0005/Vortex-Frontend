@@ -51,7 +51,10 @@ export function AppSidebar() {
         <Sidebar className="border-r border-sidebar-border" variant="sidebar">
             <SidebarHeader className="p-4">
                 {/* Workspace Switcher */}
-                <div className="flex items-center justify-between gap-2 mb-4 cursor-pointer rounded-md p-1 hover:bg-sidebar-accent transition-colors">
+                <div
+                    className="flex items-center justify-between gap-2 mb-4 cursor-pointer rounded-md p-1 hover:bg-sidebar-accent transition-colors"
+                    onClick={() => navigate("/")}
+                >
                     <div className="flex items-center gap-2">
                         <div className="flex h-6 w-6 items-center justify-center rounded bg-indigo-500 text-white font-bold text-xs">
                             V
@@ -82,7 +85,7 @@ export function AppSidebar() {
                                     onClick={() => navigate('/inbox')}
                                     isActive={location.pathname === '/inbox'}
                                 >
-                                    <Inbox className="h-4 w-4" />
+                                    <Inbox className="h-4 w-4 text-indigo-400" />
                                     <span>Inbox</span>
                                 </SidebarMenuButton>
                                 <SidebarMenuBadge className="bg-sidebar-accent text-muted-foreground rounded text-[10px] px-1.5 min-w-0">3</SidebarMenuBadge>
@@ -92,7 +95,7 @@ export function AppSidebar() {
                                     onClick={() => navigate('/my-issues')}
                                     isActive={location.pathname === '/my-issues'}
                                 >
-                                    <ListTodo className="h-4 w-4" />
+                                    <ListTodo className="h-4 w-4 text-indigo-400" />
                                     <span>My Issues</span>
                                 </SidebarMenuButton>
                                 <SidebarMenuBadge className="bg-sidebar-accent text-muted-foreground rounded text-[10px] px-1.5 min-w-0">12</SidebarMenuBadge>
@@ -102,7 +105,7 @@ export function AppSidebar() {
                                     onClick={() => navigate('/views')}
                                     isActive={location.pathname === '/views'}
                                 >
-                                    <Disc className="h-4 w-4" />
+                                    <Disc className="h-4 w-4 text-indigo-400" />
                                     <span>Views</span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -111,7 +114,7 @@ export function AppSidebar() {
                                     onClick={() => navigate('/roadmap')}
                                     isActive={location.pathname === '/roadmap'}
                                 >
-                                    <Target className="h-4 w-4" />
+                                    <Target className="h-4 w-4 text-indigo-400" />
                                     <span>Roadmap</span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -141,7 +144,7 @@ export function AppSidebar() {
                                     onClick={() => navigate('/hierarchy')}
                                     isActive={location.pathname === '/hierarchy'}
                                 >
-                                    <Layers className="h-4 w-4" />
+                                    <Layers className="h-4 w-4 text-indigo-400" />
                                     <span>Hierarchy</span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -150,7 +153,7 @@ export function AppSidebar() {
                                     onClick={() => navigate('/team')}
                                     isActive={location.pathname === '/team'}
                                 >
-                                    <Users className="h-4 w-4" />
+                                    <Users className="h-4 w-4 text-indigo-400" />
                                     <span>Team</span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -185,11 +188,54 @@ export function AppSidebar() {
             {/* Footer */}
             <SidebarFooter className="p-4">
                 <div className="flex items-center justify-between px-2 text-muted-foreground mb-4">
-                    {theme === 'dark' ? (
-                        <Moon className="h-4 w-4 cursor-pointer hover:text-foreground transition-colors" onClick={() => setTheme('light')} />
-                    ) : (
-                        <Sun className="h-4 w-4 cursor-pointer hover:text-foreground transition-colors" onClick={() => setTheme('dark')} />
-                    )}
+                    <button
+                        className="p-0 border-none bg-transparent"
+                        onClick={(e) => {
+                            const isDark = theme === 'dark';
+                            const newTheme = isDark ? 'light' : 'dark';
+
+                            // @ts-ignore - View Transitions API
+                            if (!document.startViewTransition) {
+                                setTheme(newTheme);
+                                return;
+                            }
+
+                            const x = e.clientX;
+                            const y = e.clientY;
+                            const endRadius = Math.hypot(
+                                Math.max(x, window.innerWidth - x),
+                                Math.max(y, window.innerHeight - y)
+                            );
+
+                            // @ts-ignore
+                            const transition = document.startViewTransition(() => {
+                                setTheme(newTheme);
+                            });
+
+                            transition.ready.then(() => {
+                                document.documentElement.animate(
+                                    {
+                                        clipPath: isDark
+                                            ? [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`]
+                                            : [`circle(${endRadius}px at ${x}px ${y}px)`, `circle(0px at ${x}px ${y}px)`],
+                                    },
+                                    {
+                                        duration: 500,
+                                        easing: "ease-in-out",
+                                        pseudoElement: isDark
+                                            ? "::view-transition-new(root)"
+                                            : "::view-transition-old(root)",
+                                    }
+                                );
+                            });
+                        }}
+                    >
+                        {theme === 'dark' ? (
+                            <Moon className="h-4 w-4 cursor-pointer hover:text-foreground transition-all duration-300" />
+                        ) : (
+                            <Sun className="h-4 w-4 cursor-pointer hover:text-foreground transition-all duration-300" />
+                        )}
+                    </button>
                     <Settings
                         className="h-4 w-4 cursor-pointer hover:text-foreground transition-colors"
                         onClick={() => navigate('/settings')}

@@ -10,16 +10,17 @@ import {
   ListTodo,
   Disc,
   Target,
-  LayoutTemplate,
   Layers,
   Users,
   Settings,
   Plus
 } from "lucide-react";
+import { ProjectsPage } from "../feature/projects/components/ProjectsPage";
 
 const routes: RouteObject[] = [
   ...authRoutes,
   {
+    index: true,
     path: "/",
     element: <LandingPage />
   },
@@ -50,9 +51,8 @@ const routes: RouteObject[] = [
             element: <ComingSoon title="roadmap" icon={Target} />,
           },
           {
-            index: true,
             path: "projects",
-            element: <ComingSoon title="projects" icon={LayoutTemplate} />,
+            element: <ProjectsPage />,
           },
           {
             path: "projects/new",
