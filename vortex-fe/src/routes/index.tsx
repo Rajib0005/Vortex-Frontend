@@ -13,7 +13,8 @@ import {
   Layers,
   Users,
   Settings,
-  Plus
+  Plus,
+  Network
 } from "lucide-react";
 import { ProjectsPage } from "../feature/projects/components/ProjectsPage";
 
@@ -60,7 +61,7 @@ const routes: RouteObject[] = [
           },
           {
             path: "hierarchy",
-            element: <ComingSoon title="hierarchy" icon={Layers} />,
+            element: <ComingSoon title="hierarchy" icon={Network} />,
           },
           {
             path: "team",

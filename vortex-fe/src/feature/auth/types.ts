@@ -13,3 +13,8 @@ export interface UserDetails {
   roleId: string;
   roleName: string;
 }
+
+export interface UserToInvite {
+  userId: string;
+  userEmail: string;
+}

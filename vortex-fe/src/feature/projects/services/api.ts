@@ -1,8 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiService } from '../../../lib/axios';
 import { ProjectUrls } from './urls';
-import type { Project } from '../types';
+import type { Project, UpsertProjectModel } from '../model';
 import type { BaseResponse } from '@/model/base.api.model';
+import type { UserToInvite } from '@/feature/auth/types';
 
 export const useGetProjectsQuery = (userId: string) => {
     return useQuery<BaseResponse<Project[]>, Error>({
@@ -12,3 +13,28 @@ export const useGetProjectsQuery = (userId: string) => {
         },
     });
 };
+
+export const useGetUsersToInviteQuery = (projectId: string | null) => {
+    return useQuery<BaseResponse<UserToInvite[]>, Error>({
+        queryKey: ['users-to-invite', projectId],
+        queryFn: () => {
+            return apiService.get<UserToInvite[]>(ProjectUrls.getUsersToInvite, projectId ? { projectId } : undefined);
+        },
+    });
+};
+
+export const useUpsertProject = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation<BaseResponse<string>, Error, UpsertProjectModel>({
+        mutationFn: (model: UpsertProjectModel) => {
+            return apiService.post<string>(ProjectUrls.upsertProject, model);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['projects'] });
+        }
+    });
+};
+
+
+

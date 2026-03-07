@@ -2,7 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MoreHorizontal, Calendar, CheckCircle2, LayersPlus } from "lucide-react";
-import type { Project } from "../types";
+import type { Project } from "../model";
+import React from "react";
+import { CreateProjectModal } from "./CreateProjectModal";
 
 interface ProjectCardProps {
     project: Project;
@@ -75,15 +77,23 @@ export function ProjectCard({ project }: ProjectCardProps) {
 }
 
 export function CreateProjectCard() {
+    const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
+    const toggleModal = () => setIsCreateModalOpen(!isCreateModalOpen);
     return (
-        <Card className="bg-transparent border-dashed border-2 border-border/50 hover:border-primary/50 transition-colors group cursor-pointer h-full min-h-[250px] flex flex-col items-center justify-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-secondary/50 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <LayersPlus className="h-6 w-6 group-hover:text-indigo-400 transition-colors" />
-            </div>
-            <div className="text-center">
-                <h3 className="font-bold text-lg">Create new project</h3>
-                <p className="text-muted-foreground text-sm">Start a new initiative for your team</p>
-            </div>
-        </Card>
+        <>
+            <Card className="bg-transparent border-dashed border-2 border-border/50 hover:border-primary/50 transition-colors group cursor-pointer h-full min-h-[250px] flex flex-col items-center justify-center gap-4">
+                <div
+                    className="w-12 h-12 rounded-full bg-secondary/50 flex items-center justify-center group-hover:bg-primary/20 transition-colors"
+                    onClick={toggleModal}
+                >
+                    <LayersPlus className="h-6 w-6 group-hover:text-indigo-400 transition-colors" />
+                </div>
+                <div className="text-center">
+                    <h3 className="font-bold text-lg">Create new project</h3>
+                    <p className="text-muted-foreground text-sm">Start a new initiative for your team</p>
+                </div>
+            </Card>
+            <CreateProjectModal open={isCreateModalOpen} onOpenChange={toggleModal} />
+        </>
     );
 }

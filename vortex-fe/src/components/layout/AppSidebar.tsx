@@ -37,8 +37,10 @@ import {
     Plus,
     Moon,
     User,
-    LogOut
+    LogOut,
+    Network
 } from "lucide-react"
+import { CreateProjectModal } from "@/feature/projects/components/CreateProjectModal"
 
 export function AppSidebar() {
     const [openCommand, setOpenCommand] = useState(false)
@@ -46,6 +48,7 @@ export function AppSidebar() {
     const { logout, userEmail } = useAuth()
     const location = useLocation()
     const navigate = useNavigate()
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
     return (
         <Sidebar className="border-r border-sidebar-border" variant="sidebar">
@@ -126,7 +129,13 @@ export function AppSidebar() {
                 <SidebarGroup>
                     <SidebarGroupLabel className="flex items-center justify-between w-full uppercase text-xs font-semibold text-muted-foreground">
                         Development
-                        <Plus className="h-3 w-3 cursor-pointer hover:text-foreground" />
+                        <Plus
+                            className="h-3 w-3 cursor-pointer hover:text-foreground"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsCreateModalOpen(true);
+                            }}
+                        />
                     </SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
@@ -144,7 +153,7 @@ export function AppSidebar() {
                                     onClick={() => navigate('/hierarchy')}
                                     isActive={location.pathname === '/hierarchy'}
                                 >
-                                    <Layers className="h-4 w-4 text-indigo-400" />
+                                    <Network className="h-4 w-4 text-indigo-400" />
                                     <span>Hierarchy</span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -278,6 +287,7 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarFooter>
             <GlobalCommandDialog open={openCommand} onOpenChange={setOpenCommand} />
+            <CreateProjectModal open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen} />
         </Sidebar>
     )
 }

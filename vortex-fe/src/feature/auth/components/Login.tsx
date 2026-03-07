@@ -18,6 +18,7 @@ import { loginSchema, type LoginModel } from "../model/login.type"
 import { useState } from "react"
 import { useLoginMutation } from "../services/api"
 import { useAuth } from "@/context/AuthContext"
+import { useQueryClient } from "@tanstack/react-query"
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -25,6 +26,7 @@ const Login = () => {
     const location = useLocation();
     const { login } = useAuth();
     const { mutate: loginUser, isPending, error } = useLoginMutation();
+    const queryClient = useQueryClient();
 
     const form = useForm<LoginModel>({
         resolver: zodResolver(loginSchema),
@@ -39,6 +41,7 @@ const Login = () => {
                 onSuccess: (response) => {
                     if (response.data) {
                         login(response.data);
+                        queryClient.invalidateQueries({ queryKey: ["me"] });
                         let from = location.state?.from?.pathname || "/projects";
                         if (from === "/") from = "/projects";
                         navigate(from, { replace: true });
