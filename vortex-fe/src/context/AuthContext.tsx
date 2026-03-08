@@ -1,3 +1,4 @@
+import { useMeQuery } from "@/feature/auth/services/api";
 import { decodeToken, getUserRole, type DecodedToken } from "@/lib/auth-utils";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
@@ -7,6 +8,7 @@ interface AuthState {
     role: string | string[] | null;
     token: string | null;
     isLoading: boolean;
+    userId: string | null;
 }
 
 interface AuthContextType extends AuthState {
@@ -17,31 +19,44 @@ interface AuthContextType extends AuthState {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [authState, setAuthState] = useState<AuthState>({
-        isAuthenticated: false,
-        userEmail: null,
-        role: null,
-        token: null,
-        isLoading: true,
+    const [authState, setAuthState] = useState<AuthState>(() => {
+        const token = localStorage.getItem("token");
+        return {
+            isAuthenticated: !!token,
+            userEmail: null,
+            role: null,
+            token: token,
+            isLoading: !!token,
+            userId: null,
+        };
+    });
+
+    const { data: user, isLoading: isUserLoading, isError } = useMeQuery({
+        enabled: !!authState.token,
     });
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        if (user?.data) {
+            setAuthState(prev => ({
+                ...prev,
+                userId: user.data.id,
+                userEmail: user.data.email,
+                role: getUserRole(user.data.roleName),
+                isLoading: false,
+            }));
+        } else if ((!isUserLoading && authState.token && !user) || isError) {
+            setAuthState(prev => ({ ...prev, isLoading: false }));
+        }
+    }, [user, isUserLoading, authState.token, isError]);
+
+    useEffect(() => {
+        const token = authState.token;
         if (token) {
             const decodedUser = decodeToken(token);
             const isExpired = decodedUser && decodedUser.exp ? decodedUser.exp <= (Date.now() / 1000) : true;
 
-            if (!isExpired && decodedUser) {
-                setAuthState({
-                    isAuthenticated: true,
-                    userEmail: decodedUser.email ?? null,
-                    role: getUserRole(decodedUser),
-                    token,
-                    isLoading: false,
-                });
-            } else {
-                localStorage.removeItem("token");
-                setAuthState(prev => ({ ...prev, isLoading: false }));
+            if (isExpired) {
+                logout();
             }
         } else {
             setAuthState(prev => ({ ...prev, isLoading: false }));
@@ -50,14 +65,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = (newToken: string) => {
         localStorage.setItem("token", newToken);
-        const decodedUser = decodeToken(newToken);
-        console.log(decodedUser);
         setAuthState({
             isAuthenticated: true,
-            userEmail: decodedUser?.email ?? null,
-            role: getUserRole(decodedUser),
+            userEmail: null,
+            role: null,
             token: newToken,
-            isLoading: false,
+            isLoading: true,
+            userId: null,
         });
     };
 
@@ -69,6 +83,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             role: null,
             token: null,
             isLoading: false,
+            userId: null,
         });
     };
 

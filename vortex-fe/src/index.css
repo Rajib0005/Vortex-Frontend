@@ -168,16 +168,47 @@
     @apply border-border outline-ring/50;
   }
 
+  html {
+    color-scheme: light dark;
+  }
+
   body {
     @apply bg-background text-foreground;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
   }
 
   button,
   a,
   [role="button"],
-  [role="button"],
   [type='button'],
   [type='submit'] {
     @apply cursor-pointer;
   }
+}
+
+/* View Transitions API Styling - Layered Reveal */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* When heading to light mode, ensure the incoming light theme (new) is on top to expand */
+html:not(.dark)::view-transition-new(root) {
+  z-index: 9999;
+}
+
+html:not(.dark)::view-transition-old(root) {
+  z-index: 1;
+}
+
+/* When heading to dark mode, ensure the outgoing light theme (old) is on top to shrink */
+html.dark::view-transition-old(root) {
+  z-index: 9999;
+}
+
+html.dark::view-transition-new(root) {
+  z-index: 1;
 }

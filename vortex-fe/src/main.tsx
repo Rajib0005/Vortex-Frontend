@@ -24,7 +24,7 @@ createRoot(document.getElementById("root")!).render(
       <ThemeProvider defaultTheme="dark" storageKey="vortex-theme">
         <AuthProvider>
           <RouterProvider router={router} />
-          <Toaster position="top-right" duration={2000} />
+          <Toaster position="top-right" duration={2000} closeButton={true} />
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

@@ -24,21 +24,9 @@ export const decodeToken = (token: string): DecodedToken | null => {
   }
 };
 
-export const getUserRole = (user: DecodedToken | null): string | string[] | null => {
-  if (!user) return null;
-
-  let roles: string | string[] | undefined;
-
-  if (user.role) {
-    roles = user.role;
-  } else {
-    const msRoleClaim = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
-    if (user[msRoleClaim]) {
-      roles = user[msRoleClaim] as string | string[];
-    }
-  }
-
-  if (!roles) return null;
+export const getUserRole = (userRole: string | string[] | null): string | string[] | null => {
+  if (!userRole) return null;
+  const roles = userRole;
 
   if (Array.isArray(roles)) {
     const uniqueRoles = Array.from(new Set(roles));
