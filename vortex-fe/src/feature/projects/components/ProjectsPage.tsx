@@ -2,8 +2,6 @@ import { useGetProjectsQuery } from "../services/api";
 import { ProjectCard, CreateProjectCard } from "./ProjectCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
-import { CreateProjectModal } from "./CreateProjectModal";
-import React from "react";
 
 export function ProjectsPage() {
     const { userId } = useAuth();

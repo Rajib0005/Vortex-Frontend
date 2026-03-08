@@ -27,7 +27,6 @@ import {
     Disc,
     Target,
     LayoutTemplate,
-    Layers,
     Users,
     Star,
     Sun,
@@ -40,7 +39,7 @@ import {
     LogOut,
     Network
 } from "lucide-react"
-import { CreateProjectModal } from "@/feature/projects/components/CreateProjectModal"
+import { CreateProjectModal } from "@/feature/projects/components/dialogs/CreateProjectModal"
 
 export function AppSidebar() {
     const [openCommand, setOpenCommand] = useState(false)

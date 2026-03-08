@@ -4,27 +4,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MoreHorizontal, Calendar, CheckCircle2, LayersPlus } from "lucide-react";
 import type { Project } from "../model";
 import React from "react";
-import { CreateProjectModal } from "./CreateProjectModal";
+import { CreateProjectModal } from "./dialogs/CreateProjectModal";
+import { DeleteProjectDialog } from "./dialogs/DeleteProjectDialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Pencil, Trash2, TriangleAlert } from "lucide-react";
-import { useDeleteProject } from "../services/api";
+import { Pencil, Trash2 } from "lucide-react";
 
 interface ProjectCardProps {
     project: Project;
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
-    const { mutate: deleteProject, isPending: isDeleting } = useDeleteProject();
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
-
-    const handleDelete = () => {
-        deleteProject(project.projectId, {
-            onSuccess: () => {
-                setIsDeleteDialogOpen(false);
-            }
-        });
-    };
 
     const progress = project.numberOfTotalTasks > 0
         ? (project.numberOfCompletedTasks / project.numberOfTotalTasks) * 100
@@ -76,30 +66,11 @@ export function ProjectCard({ project }: ProjectCardProps) {
                     </DropdownMenu>
                 )}
             </CardHeader>
-            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                <AlertDialogContent className="z-[100]">
-                    <AlertDialogHeader>
-                        <AlertDialogTitle icon={<TriangleAlert className="h-5 w-5 text-destructive" />}>
-                            Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete the project
-                            <span className="font-semibold text-foreground"> {project.title} </span>
-                            and remove its data from our servers.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={(e) => { e.preventDefault(); handleDelete(); }}
-                            className="bg-destructive/10 text-destructive hover:bg-destructive/20 border border-transparent hover:border-destructive/20 shadow-none font-semibold transition-colors"
-                            disabled={isDeleting}
-                        >
-                            {isDeleting ? "Deleting..." : "Delete Project"}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            <DeleteProjectDialog
+                project={project}
+                open={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+            />
             <CardContent className="flex-1 flex flex-col gap-6 pt-4">
                 <p className="text-muted-foreground line-clamp-2 text-sm">
                     {project.description}
