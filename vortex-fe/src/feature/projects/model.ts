@@ -1,6 +1,7 @@
 import type { UserToInvite } from "../auth/types";
 
 export interface Project {
+    projectId: string;
     title: string;
     description: string;
     projectKey: string;

@@ -92,14 +92,18 @@ function AlertDialogFooter({
 
 function AlertDialogTitle({
   className,
+  icon,
   ...props
-}: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {
+}: React.ComponentProps<typeof AlertDialogPrimitive.Title> & { icon?: React.ReactNode }) {
   return (
-    <AlertDialogPrimitive.Title
-      data-slot="alert-dialog-title"
-      className={cn("text-lg font-semibold", className)}
-      {...props}
-    />
+    <div className="flex items-center gap-2">
+      {icon && <div className="text-muted-foreground">{icon}</div>}
+      <AlertDialogPrimitive.Title
+        data-slot="alert-dialog-title"
+        className={cn("text-lg font-semibold", className)}
+        {...props}
+      />
+    </div>
   )
 }
 

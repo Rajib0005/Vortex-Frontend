@@ -36,5 +36,15 @@ export const useUpsertProject = () => {
     });
 };
 
+export const useDeleteProject = () => {
+    const queryClient = useQueryClient();
 
-
+    return useMutation<BaseResponse<string>, Error, string>({
+        mutationFn: (projectId: string) => {
+            return apiService.delete<string>(`${ProjectUrls.deleteProject}/${projectId}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['projects'] });
+        }
+    });
+};

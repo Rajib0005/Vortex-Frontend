@@ -5,12 +5,27 @@ import { MoreHorizontal, Calendar, CheckCircle2, LayersPlus } from "lucide-react
 import type { Project } from "../model";
 import React from "react";
 import { CreateProjectModal } from "./CreateProjectModal";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Pencil, Trash2, TriangleAlert } from "lucide-react";
+import { useDeleteProject } from "../services/api";
 
 interface ProjectCardProps {
     project: Project;
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
+    const { mutate: deleteProject, isPending: isDeleting } = useDeleteProject();
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+
+    const handleDelete = () => {
+        deleteProject(project.projectId, {
+            onSuccess: () => {
+                setIsDeleteDialogOpen(false);
+            }
+        });
+    };
+
     const progress = project.numberOfTotalTasks > 0
         ? (project.numberOfCompletedTasks / project.numberOfTotalTasks) * 100
         : 0;
@@ -30,10 +45,61 @@ export function ProjectCard({ project }: ProjectCardProps) {
                     </div>
                     <CardTitle className="text-xl font-bold">{project.title}</CardTitle>
                 </div>
-                <button className="text-muted-foreground hover:text-foreground">
-                    <MoreHorizontal className="h-5 w-5" />
-                </button>
+                {project.canMark && (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button className="text-muted-foreground hover:text-foreground relative z-10 p-1 rounded-md hover:bg-secondary/80 transition-colors">
+                                <MoreHorizontal className="h-5 w-5" />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40 z-50 bg-popover/95 backdrop-blur-sm border-border/50 shadow-xl">
+                            <DropdownMenuItem className="cursor-pointer flex items-center gap-2 group/item" onClick={(e) => { e.stopPropagation(); /* TODO: Edit */ }}>
+                                <Pencil className="h-4 w-4 text-muted-foreground group-hover/item:text-primary transition-colors" />
+                                <span className="font-medium">Edit</span>
+                            </DropdownMenuItem>
+                            {project.canDelete && (
+                                <>
+                                    <DropdownMenuSeparator className="bg-border/50" />
+                                    <DropdownMenuItem
+                                        className="cursor-pointer flex items-center gap-2 text-destructive/80 focus:bg-destructive/10 focus:text-destructive group/item"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setIsDeleteDialogOpen(true);
+                                        }}
+                                    >
+                                        <Trash2 className="h-4 w-4 transition-colors" />
+                                        <span className="font-medium">Delete</span>
+                                    </DropdownMenuItem>
+                                </>
+                            )}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )}
             </CardHeader>
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialogContent className="z-[100]">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle icon={<TriangleAlert className="h-5 w-5 text-destructive" />}>
+                            Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the project
+                            <span className="font-semibold text-foreground"> {project.title} </span>
+                            and remove its data from our servers.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={(e) => { e.preventDefault(); handleDelete(); }}
+                            className="bg-destructive/10 text-destructive hover:bg-destructive/20 border border-transparent hover:border-destructive/20 shadow-none font-semibold transition-colors"
+                            disabled={isDeleting}
+                        >
+                            {isDeleting ? "Deleting..." : "Delete Project"}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
             <CardContent className="flex-1 flex flex-col gap-6 pt-4">
                 <p className="text-muted-foreground line-clamp-2 text-sm">
                     {project.description}
