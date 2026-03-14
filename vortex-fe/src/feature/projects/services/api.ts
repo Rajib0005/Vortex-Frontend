@@ -7,7 +7,7 @@ import type { UserToInvite } from '@/feature/auth/types';
 
 export const useGetProjectsQuery = (userId: string) => {
     return useQuery<BaseResponse<Project[]>, Error>({
-        queryKey: ['projects'],
+        queryKey: ['projects', 'list'],
         queryFn: () => {
             return apiService.get<Project[]>(ProjectUrls.getProject + `?userId=${userId}`);
         },
@@ -19,6 +19,16 @@ export const useGetUsersToInviteQuery = (projectId: string | null) => {
         queryKey: ['users-to-invite', projectId],
         queryFn: () => {
             return apiService.get<UserToInvite[]>(ProjectUrls.getUsersToInvite, projectId ? { projectId } : undefined);
+        },
+    });
+};
+
+export const useGetProjectDetailsForEditQuery = (projectId: string | null) => {
+    return useQuery<BaseResponse<UpsertProjectModel>, Error>({
+        queryKey: ['projects', 'project-for-edit', projectId],
+        enabled: !!projectId,
+        queryFn: () => {
+            return apiService.get<UpsertProjectModel>(ProjectUrls.getProjectDetailsForUpdate + `?projectId=${projectId}`);
         },
     });
 };
