@@ -42,6 +42,7 @@ const Login = () => {
                     if (response.data) {
                         login(response.data);
                         queryClient.invalidateQueries({ queryKey: ["me"] });
+                        queryClient.invalidateQueries({ queryKey: ["projects"] });
                         let from = location.state?.from?.pathname || "/projects";
                         if (from === "/") from = "/projects";
                         navigate(from, { replace: true });

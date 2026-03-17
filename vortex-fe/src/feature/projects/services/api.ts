@@ -5,20 +5,21 @@ import type { Project, UpsertProjectModel } from '../model';
 import type { BaseResponse } from '@/model/base.api.model';
 import type { UserToInvite } from '@/feature/auth/types';
 
-export const useGetProjectsQuery = (userId: string) => {
+export const useGetProjectsQuery = (userId: string | undefined) => {
     return useQuery<BaseResponse<Project[]>, Error>({
-        queryKey: ['projects', 'list'],
+        queryKey: ['projects', 'list', userId],
+        enabled: !!userId,
         queryFn: () => {
-            return apiService.get<Project[]>(ProjectUrls.getProject + `?userId=${userId}`);
+            return apiService.get<Project[]>(ProjectUrls.getProject, { userId });
         },
     });
 };
 
-export const useGetUsersToInviteQuery = (projectId: string | null) => {
+export const useGetUsersToInviteQuery = (projectId: string | null | undefined) => {
     return useQuery<BaseResponse<UserToInvite[]>, Error>({
         queryKey: ['users-to-invite', projectId],
         queryFn: () => {
-            return apiService.get<UserToInvite[]>(ProjectUrls.getUsersToInvite, projectId ? { projectId } : undefined);
+            return apiService.get<UserToInvite[]>(ProjectUrls.getUsersToInvite, projectId ? { projectId } : {});
         },
     });
 };
@@ -28,7 +29,7 @@ export const useGetProjectDetailsForEditQuery = (projectId: string | null) => {
         queryKey: ['projects', 'project-for-edit', projectId],
         enabled: !!projectId,
         queryFn: () => {
-            return apiService.get<UpsertProjectModel>(ProjectUrls.getProjectDetailsForUpdate + `?projectId=${projectId}`);
+            return apiService.get<UpsertProjectModel>(ProjectUrls.getProjectDetailsForUpdate, { projectId });
         },
     });
 };

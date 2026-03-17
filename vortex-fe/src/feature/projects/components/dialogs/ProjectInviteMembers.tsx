@@ -14,7 +14,11 @@ import type { ProjectFormData } from "./CreateProjectModal";
 
 export function ProjectInviteMembers() {
     const form = useFormContext<ProjectFormData>();
-    const { data: usersToInvite, isLoading } = useGetUsersToInviteQuery(null);
+    const projectId = useWatch({
+        control: form.control,
+        name: "projectId"
+    });
+    const { data: usersToInvite, isLoading } = useGetUsersToInviteQuery(projectId || null);
     const [searchQuery, setSearchQuery] = React.useState("");
     const [isSearching, setIsSearching] = React.useState(false);
 

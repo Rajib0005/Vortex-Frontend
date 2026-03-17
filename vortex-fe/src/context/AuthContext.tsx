@@ -1,5 +1,6 @@
 import { useMeQuery } from "@/feature/auth/services/api";
 import { decodeToken, getUserRole, type DecodedToken } from "@/lib/auth-utils";
+import { useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 interface AuthState {
@@ -19,6 +20,7 @@ interface AuthContextType extends AuthState {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+    const queryClient = useQueryClient();
     const [authState, setAuthState] = useState<AuthState>(() => {
         const token = localStorage.getItem("token");
         return {
@@ -77,6 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const logout = () => {
         localStorage.removeItem("token");
+        queryClient.clear();
         setAuthState({
             isAuthenticated: false,
             userEmail: null,
