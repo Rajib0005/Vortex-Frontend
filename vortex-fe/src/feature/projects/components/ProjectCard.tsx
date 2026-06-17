@@ -8,6 +8,7 @@ import { CreateProjectModal } from "./dialogs/CreateProjectModal";
 import { DeleteProjectDialog } from "./dialogs/DeleteProjectDialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Pencil, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 
 interface ProjectCardProps {
@@ -17,7 +18,7 @@ interface ProjectCardProps {
 export function ProjectCard({ project }: ProjectCardProps) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
-
+    const navigate = useNavigate();
     const progress = project.numberOfTotalTasks > 0
         ? (project.numberOfCompletedTasks / project.numberOfTotalTasks) * 100
         : 0;
@@ -29,7 +30,10 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
     return (
         <>
-            <Card className="group group-hover:text-indigo-400 bg-card border border-border/60 rounded-xl px-4 py-6 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all cursor-pointer flex flex-col gap-2 relative overflow-hidden">
+            <Card
+                className="group group-hover:text-indigo-400 bg-card border border-border/60 rounded-xl px-4 py-6 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all cursor-pointer flex flex-col gap-2 relative overflow-hidden"
+                onClick={() => navigate(`/tasks?projectId=${project.projectId}`)}
+            >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors" />
                     <div className="flex items-center gap-2">

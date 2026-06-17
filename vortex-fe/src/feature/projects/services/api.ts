@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiService } from '../../../lib/axios';
-import { ProjectUrls } from './urls';
+import { urls } from '@/url';
 import type { Project, UpsertProjectModel } from '../model';
 import type { BaseResponse } from '@/model/base.api.model';
 import type { UserToInvite } from '@/feature/auth/types';
@@ -10,7 +10,7 @@ export const useGetProjectsQuery = (userId: string | undefined) => {
         queryKey: ['projects', 'list', userId],
         enabled: !!userId,
         queryFn: () => {
-            return apiService.get<Project[]>(ProjectUrls.getProject, { userId });
+            return apiService.get<Project[]>(urls.project.getProject, { userId });
         },
     });
 };
@@ -19,7 +19,7 @@ export const useGetUsersToInviteQuery = (projectId: string | null | undefined) =
     return useQuery<BaseResponse<UserToInvite[]>, Error>({
         queryKey: ['users-to-invite', projectId],
         queryFn: () => {
-            return apiService.get<UserToInvite[]>(ProjectUrls.getUsersToInvite, projectId ? { projectId } : {});
+            return apiService.get<UserToInvite[]>(urls.project.getUsersToInvite, projectId ? { projectId } : {});
         },
     });
 };
@@ -29,7 +29,7 @@ export const useGetProjectDetailsForEditQuery = (projectId: string | null) => {
         queryKey: ['projects', 'project-for-edit', projectId],
         enabled: !!projectId,
         queryFn: () => {
-            return apiService.get<UpsertProjectModel>(ProjectUrls.getProjectDetailsForUpdate, { projectId });
+            return apiService.get<UpsertProjectModel>(urls.project.getProjectDetailsForUpdate, { projectId });
         },
     });
 };
@@ -39,7 +39,7 @@ export const useUpsertProject = () => {
 
     return useMutation<BaseResponse<string>, Error, UpsertProjectModel>({
         mutationFn: (model: UpsertProjectModel) => {
-            return apiService.post<string>(ProjectUrls.upsertProject, model);
+            return apiService.post<string>(urls.project.upsertProject, model);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['projects'] });
@@ -52,7 +52,7 @@ export const useDeleteProject = () => {
 
     return useMutation<BaseResponse<string>, Error, string>({
         mutationFn: (projectId: string) => {
-            return apiService.delete<string>(`${ProjectUrls.deleteProject}/${projectId}`);
+            return apiService.delete<string>(`${urls.project.deleteProject}/${projectId}`);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['projects'] });

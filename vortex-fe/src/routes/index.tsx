@@ -10,13 +10,13 @@ import {
   ListTodo,
   Disc,
   Target,
-  Layers,
   Users,
   Settings,
   Plus,
   Network
 } from "lucide-react";
 import { ProjectsPage } from "../feature/projects/components/ProjectsPage";
+import { TasksPage } from "../feature/tasks/components/TasksPage";
 
 const routes: RouteObject[] = [
   ...authRoutes,
@@ -54,6 +54,10 @@ const routes: RouteObject[] = [
           {
             path: "projects",
             element: <ProjectsPage />,
+          },
+          {
+            path: "tasks",
+            element: <TasksPage />,
           },
           {
             path: "projects/new",

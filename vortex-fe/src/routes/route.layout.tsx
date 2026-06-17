@@ -7,7 +7,7 @@ const BaseLayout = () => {
     <SidebarProvider>
       <AppSidebar />
       <SidebarTrigger className="md-2" />
-      <main className="flex-1 p-6 h-screen overflow-auto bg-background">
+      <main className="relative flex-1 p-6 h-screen overflow-auto bg-background">
         <Outlet />
       </main>
     </SidebarProvider>

@@ -1,5 +1,5 @@
 import { useMeQuery } from "@/feature/auth/services/api";
-import { decodeToken, getUserRole, type DecodedToken } from "@/lib/auth-utils";
+import { decodeToken, getUserRole } from "@/lib/auth-utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
